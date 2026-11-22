@@ -1,0 +1,32 @@
+TEST RESULTS - poison-scan
+Recorded by the builder (AI assistant), not by Dahoba.
+Date: 2026-11-22. Python: Python 3.10.12. OS: Linux 6.1.189+ x86_64.
+
+$ python3 -m unittest discover -s tests -v
+Ran 17 tests in 1.600s
+
+OK
+
+$ python3 -m poisonscan.cli evaluate
+generated dataset: 425 records, 45 poisoned {'label_flip': 20, 'trigger': 15, 'duplicate': 10}
+triggers   precision 1.000 recall 0.333 (flagged 15)
+duplicates precision 0.500 recall 0.244 (flagged 22)
+neighbors  precision 1.000 recall 0.644 (flagged 29)
+union      precision 0.804 recall 1.000 (flagged 56)
+same-author synthetic evaluation; not a real-world rate
+
+$ python3 -m poisonscan.cli generate --out /tmp/demo.jsonl && python3 -m poisonscan.cli audit /tmp/demo.jsonl
+audited 425 records from /tmp/demo.jsonl, labels: {'positive': 247, 'negative': 178}
+trigger candidates: 1
+  - 'zebrawood' -> label 'positive' in 15/15 records, edge share 1.00, lines [6, 16, 34, 91, 151]
+cross-label duplicate pairs: 11 (same-label pairs: 4, hygiene only)
+  - lines 15 and 122 (1.00 similar) labelled 'negative' vs 'positive'
+  - lines 19 and 66 (1.00 similar) labelled 'positive' vs 'negative'
+  - lines 26 and 265 (1.00 similar) labelled 'negative' vs 'positive'
+  - lines 39 and 54 (1.00 similar) labelled 'negative' vs 'positive'
+  - lines 57 and 148 (1.00 similar) labelled 'negative' vs 'positive'
+  - lines 87 and 347 (1.00 similar) labelled 'negative' vs 'positive'
+  - lines 145 and 325 (1.00 similar) labelled 'negative' vs 'positive'
+  - lines 149 and 211 (1.00 similar) labelled 'negative' vs 'positive'
+audit exit code: 2 (2 = indicators found)
+$ python -m pip install . (fresh venv) -> installed; poisonscan CLI runs
